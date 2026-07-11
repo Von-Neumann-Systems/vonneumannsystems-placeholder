@@ -1,19 +1,761 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Von Neumann Systems</title>
-    <style>
-        body { font-family: monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f4f4f4; color: #333; }
-        .container { text-align: center; }
-        h1 { font-size: 2.5rem; margin-bottom: 10px; }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f2f0e9">
+  <meta name="description" content="Von Neumann Systems LLC is the independent product studio of Ben White, building useful products across software, infrastructure, and customer experience.">
+  <meta property="og:title" content="Von Neumann Systems LLC — Independent Product Studio">
+  <meta property="og:description" content="Building useful products at the intersection of software, infrastructure, and customer experience.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://vonneumannsystems.com/">
+  <meta name="twitter:card" content="summary">
+  <title>Von Neumann Systems LLC — Independent Product Studio</title>
+  <style>
+    :root {
+      --paper: #f2f0e9;
+      --paper-deep: #e7e3d8;
+      --ink: #17221e;
+      --muted: #5c6862;
+      --line: #c8cec6;
+      --accent: #b7482f;
+      --accent-dark: #8e321f;
+      --green: #244e42;
+      --white: #fffdf7;
+      --max-width: 1180px;
+      --radius: 3px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      text-rendering: optimizeLegibility;
+    }
+
+    body::before {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(36, 78, 66, .045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(36, 78, 66, .045) 1px, transparent 1px);
+      background-size: 40px 40px;
+      content: "";
+      mask-image: linear-gradient(to bottom, #000, transparent 72%);
+      pointer-events: none;
+    }
+
+    a { color: inherit; }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 4px;
+    }
+
+    .skip-link {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 100;
+      padding: .7rem 1rem;
+      background: var(--ink);
+      color: var(--white);
+      transform: translateY(-150%);
+    }
+
+    .skip-link:focus { transform: translateY(0); }
+
+    .wrap {
+      width: min(calc(100% - 48px), var(--max-width));
+      margin-inline: auto;
+    }
+
+    .site-header {
+      position: relative;
+      z-index: 10;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav {
+      display: flex;
+      min-height: 86px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: .8rem;
+      font-size: .78rem;
+      font-weight: 750;
+      letter-spacing: .11em;
+      line-height: 1.25;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      flex: 0 0 auto;
+      place-items: center;
+      border: 1px solid var(--ink);
+      background: var(--ink);
+      color: var(--paper);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: .9rem;
+      letter-spacing: -.07em;
+    }
+
+    .nav-links {
+      display: flex;
+      margin: 0;
+      padding: 0;
+      align-items: center;
+      gap: 1.6rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .nav-links a:hover { color: var(--accent-dark); }
+
+    .hero {
+      display: grid;
+      min-height: 700px;
+      padding-block: clamp(5rem, 10vw, 9rem);
+      align-items: end;
+      grid-template-columns: minmax(0, 1.6fr) minmax(260px, .6fr);
+      gap: clamp(3rem, 8vw, 8rem);
+    }
+
+    .eyebrow {
+      display: flex;
+      margin: 0 0 1.5rem;
+      align-items: center;
+      gap: .7rem;
+      color: var(--accent-dark);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      width: 8px;
+      height: 8px;
+      border: 1px solid currentColor;
+      background: var(--accent);
+      content: "";
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      max-width: 880px;
+      margin-bottom: 1.8rem;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.7rem, 4.8vw, 4.8rem);
+      font-weight: 400;
+      letter-spacing: -.055em;
+      line-height: 1.04;
+    }
+
+    .hero-copy {
+      max-width: 720px;
+      margin-bottom: 2.2rem;
+      color: var(--muted);
+      font-size: clamp(1.08rem, 1.6vw, 1.28rem);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .8rem;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 50px;
+      padding: .8rem 1.15rem;
+      align-items: center;
+      justify-content: center;
+      gap: .8rem;
+      border: 1px solid var(--ink);
+      border-radius: var(--radius);
+      font-size: .78rem;
+      font-weight: 750;
+      letter-spacing: .06em;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: background .2s ease, color .2s ease, transform .2s ease;
+    }
+
+    .button::after { content: "↗"; font-size: 1rem; }
+    .button[href^="#"]::after { content: "↓"; }
+
+    .button-primary { background: var(--ink); color: var(--white); }
+    .button:hover { transform: translateY(-2px); }
+    .button-primary:hover { background: var(--green); }
+    .button-secondary:hover { background: var(--white); }
+
+    .hero-aside {
+      padding-top: 1rem;
+      border-top: 1px solid var(--ink);
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .73rem;
+      line-height: 1.8;
+      text-transform: uppercase;
+    }
+
+    .hero-aside strong { color: var(--ink); }
+
+    .section {
+      padding-block: clamp(5rem, 9vw, 8.5rem);
+      border-top: 1px solid var(--line);
+      scroll-margin-top: 2rem;
+    }
+
+    .section-head {
+      display: grid;
+      margin-bottom: clamp(3rem, 6vw, 5.5rem);
+      grid-template-columns: .6fr 1.4fr;
+      gap: 2rem;
+    }
+
+    .section-index {
+      color: var(--accent-dark);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .75rem;
+      letter-spacing: .08em;
+    }
+
+    h2 {
+      margin-bottom: 1rem;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.2rem, 4.5vw, 4.5rem);
+      font-weight: 400;
+      letter-spacing: -.04em;
+      line-height: 1;
+    }
+
+    .section-intro {
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .product-panel {
+      display: grid;
+      overflow: hidden;
+      min-height: 540px;
+      border: 1px solid var(--ink);
+      background: var(--white);
+      grid-template-columns: 1.05fr .95fr;
+    }
+
+    .product-content {
+      display: flex;
+      padding: clamp(2rem, 5vw, 4.5rem);
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    .label {
+      display: inline-block;
+      margin-bottom: 2rem;
+      padding: .3rem .55rem;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .66rem;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+
+    .product-content h3 {
+      margin-bottom: 1.2rem;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.5rem, 5vw, 5rem);
+      font-weight: 400;
+      letter-spacing: -.05em;
+      line-height: .98;
+    }
+
+    .product-content p { max-width: 580px; color: var(--muted); }
+
+    .product-visual {
+      position: relative;
+      overflow: hidden;
+      min-height: 540px;
+      background: #24170f;
+    }
+
+    .product-logo {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .visual-caption {
+      position: absolute;
+      right: 1.2rem;
+      bottom: 1rem;
+      left: 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      color: rgba(255,255,255,.65);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .62rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .case-grid { border-top: 1px solid var(--ink); }
+
+    .case {
+      display: grid;
+      padding-block: 2.4rem;
+      border-bottom: 1px solid var(--line);
+      grid-template-columns: 56px minmax(220px, .75fr) minmax(0, 1.5fr);
+      gap: 1.4rem;
+    }
+
+    .case-number {
+      color: var(--accent-dark);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .72rem;
+    }
+
+    .case h3 {
+      margin-bottom: .6rem;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+      font-weight: 400;
+      letter-spacing: -.025em;
+      line-height: 1.1;
+    }
+
+    .case-tag { color: var(--muted); font-size: .75rem; }
+
+    .case-flow {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.5rem 2.5rem;
+    }
+
+    .case-flow div { position: relative; }
+
+    .case-flow dt {
+      margin-bottom: .3rem;
+      color: var(--accent-dark);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .case-flow dd { margin: 0; color: var(--muted); font-size: .9rem; line-height: 1.55; }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: clamp(3rem, 8vw, 8rem);
+    }
+
+    .about-copy p {
+      max-width: 720px;
+      color: var(--muted);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.35rem, 2.3vw, 2rem);
+      line-height: 1.45;
+    }
+
+    .capabilities { margin: 0; padding: 0; list-style: none; }
+
+    .capabilities li {
+      padding: .9rem 0;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .capabilities li:first-child { border-top: 1px solid var(--line); }
+
+    .timeline { position: relative; }
+
+    .timeline::before {
+      position: absolute;
+      top: 9px;
+      bottom: 9px;
+      left: 6px;
+      width: 1px;
+      background: var(--line);
+      content: "";
+    }
+
+    .timeline-item {
+      position: relative;
+      display: grid;
+      padding: 0 0 2.4rem 2.5rem;
+      grid-template-columns: minmax(180px, .55fr) 1.45fr;
+      gap: 2rem;
+    }
+
+    .timeline-item:last-child { padding-bottom: 0; }
+
+    .timeline-item::before {
+      position: absolute;
+      top: 7px;
+      left: 2px;
+      width: 9px;
+      height: 9px;
+      border: 1px solid var(--accent-dark);
+      background: var(--paper);
+      content: "";
+      transform: rotate(45deg);
+    }
+
+    .timeline-item:first-child::before { background: var(--accent); }
+
+    .timeline-item h3 { margin: 0; font-size: 1rem; }
+    .timeline-item p { margin: 0; color: var(--muted); font-size: .9rem; }
+
+    .contact {
+      background: var(--ink);
+      color: var(--white);
+    }
+
+    .contact .section-index,
+    .contact .eyebrow { color: #e67e65; }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap: clamp(3rem, 8vw, 8rem);
+    }
+
+    .contact h2 { max-width: 780px; }
+    .contact-copy { max-width: 670px; color: #b9c1bd; font-size: 1.05rem; }
+
+    .contact-links {
+      display: flex;
+      margin: 0;
+      padding: 0;
+      flex-direction: column;
+      list-style: none;
+    }
+
+    .contact-links a,
+    .contact-links span {
+      display: flex;
+      padding: 1rem 0;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #43504a;
+      text-decoration: none;
+    }
+
+    .contact-links li:last-child a,
+    .contact-links li:last-child span { border-bottom: 1px solid #43504a; }
+
+    .contact-links a:hover { color: #e67e65; }
+    .contact-links a::after { content: "↗"; }
+    .site-footer {
+      padding-block: 2rem;
+      border-top: 1px solid #43504a;
+      background: var(--ink);
+      color: #8d9993;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .66rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .footer-inner { display: flex; justify-content: space-between; gap: 1rem; }
+
+    @media (max-width: 850px) {
+      .nav-links li:not(:last-child) { display: none; }
+      .hero { min-height: auto; grid-template-columns: 1fr; }
+      .hero-aside { max-width: 360px; }
+      .section-head,
+      .product-panel,
+      .about-grid,
+      .contact-grid { grid-template-columns: 1fr; }
+      .product-visual { min-height: 420px; }
+      .case { grid-template-columns: 38px 1fr; }
+      .case-flow { grid-column: 2; }
+    }
+
+    @media (max-width: 560px) {
+      .wrap { width: min(calc(100% - 32px), var(--max-width)); }
+      .nav { min-height: 70px; }
+      .brand { font-size: .67rem; }
+      .brand-mark { width: 30px; height: 30px; }
+      .hero { padding-block: 5rem; gap: 3.5rem; }
+      h1 { font-size: clamp(2.45rem, 10vw, 3.4rem); }
+      .actions { flex-direction: column; }
+      .button { width: 100%; }
+      .product-visual { min-height: 340px; }
+      .case { grid-template-columns: 28px 1fr; gap: .8rem; }
+      .case-flow { grid-template-columns: 1fr; grid-column: 2; gap: 1.2rem; }
+      .timeline-item { grid-template-columns: 1fr; gap: .4rem; }
+      .footer-inner { flex-direction: column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Von Neumann Systems</h1>
-        <p>Under Construction.</p>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <nav class="nav wrap" aria-label="Primary navigation">
+      <a class="brand" href="#top" aria-label="Von Neumann Systems LLC, back to top">
+        <span class="brand-mark" aria-hidden="true">VN</span>
+        <span>Von Neumann<br>Systems LLC</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#product">Product</a></li>
+        <li><a href="#work">Selected work</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero wrap" id="top" aria-labelledby="hero-title">
+      <div>
+        <p class="eyebrow">Independent product studio · Ben White</p>
+        <h1 id="hero-title">Building useful products at the intersection of software, infrastructure, and customer experience.</h1>
+        <p class="hero-copy">Von Neumann Systems LLC is my independent product studio. I’m Ben White, a technical product and program leader with experience bringing complex hardware, cloud infrastructure, and software products from concept through delivery.</p>
+        <div class="actions">
+          <a class="button button-primary" href="https://theawardvault.com/" target="_blank" rel="noopener noreferrer">Explore The Award Vault</a>
+          <a class="button button-secondary" href="#work">View selected work</a>
+        </div>
+      </div>
+      <aside class="hero-aside" aria-label="Areas of focus">
+        <strong>Product definition</strong><br>
+        Technical program leadership<br>
+        Systems thinking<br>
+        Cross-functional delivery<br>
+        New-product development
+      </aside>
+    </section>
+
+    <section class="section" id="product" aria-labelledby="product-title">
+      <div class="wrap">
+        <header class="section-head">
+          <span class="section-index">01 / Featured product</span>
+          <div>
+            <h2 id="product-title">From an idea to a working product.</h2>
+            <p class="section-intro">The Award Vault is where product strategy, technical architecture, and service delivery meet in one hands-on build.</p>
+          </div>
+        </header>
+
+        <article class="product-panel">
+          <div class="product-content">
+            <div>
+              <span class="label">Active product · External site</span>
+              <h3>The Award Vault</h3>
+              <p>A platform for creating, granting, and preserving meaningful digital awards. I’m responsible for product definition, user workflows, technical architecture, authentication, payments, service design, deployment, and ongoing iteration.</p>
+            </div>
+            <a class="button button-primary" href="https://theawardvault.com/" target="_blank" rel="noopener noreferrer">Visit the product</a>
+          </div>
+          <div class="product-visual">
+            <img class="product-logo" src="assets/award-vault-logo.png" alt="The Award Vault gold trophy logo" width="1024" height="1024">
+            <div class="visual-caption"><span>Create</span><span>Grant</span><span>Preserve</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="work" aria-labelledby="work-title">
+      <div class="wrap">
+        <header class="section-head">
+          <span class="section-index">02 / Selected work</span>
+          <div>
+            <h2 id="work-title">Products, programs, and systems.</h2>
+            <p class="section-intro">A career spent turning ambiguous, technically complex work into clear decisions and coordinated delivery.</p>
+          </div>
+        </header>
+
+        <div class="case-grid">
+          <article class="case">
+            <span class="case-number">01</span>
+            <header>
+              <h3>The Award Vault</h3>
+              <span class="case-tag">Product building</span>
+            </header>
+            <dl class="case-flow">
+              <div><dt>Problem</dt><dd>Turn a concept for meaningful digital recognition into a coherent, usable product.</dd></div>
+              <div><dt>Role</dt><dd>Founder and product builder, owning the experience and technical direction end to end.</dd></div>
+              <div><dt>Approach</dt><dd>Defined organization and recipient workflows, authentication, payments, and the supporting service architecture.</dd></div>
+              <div><dt>Outcome</dt><dd>A working product and a continuous learning loop for making informed product tradeoffs and improvements.</dd></div>
+            </dl>
+          </article>
+
+          <article class="case">
+            <span class="case-number">02</span>
+            <header>
+              <h3>Cloud Infrastructure Products &amp; Services</h3>
+              <span class="case-tag">Program leadership</span>
+            </header>
+            <dl class="case-flow">
+              <div><dt>Problem</dt><dd>Deliver complex infrastructure outcomes across products, services, and customer environments.</dd></div>
+              <div><dt>Role</dt><dd>Led customer-facing technical programs across engineering, infrastructure, support, and customer teams.</dd></div>
+              <div><dt>Approach</dt><dd>Translated customer needs into roadmaps, execution plans, dependencies, and clear operating rhythms.</dd></div>
+              <div><dt>Outcome</dt><dd>Focused teams on delivery reliability, operating costs, and better customer outcomes.</dd></div>
+            </dl>
+          </article>
+
+          <article class="case">
+            <span class="case-number">03</span>
+            <header>
+              <h3>Consumer Electronics Product Development</h3>
+              <span class="case-tag">New-product delivery</span>
+            </header>
+            <dl class="case-flow">
+              <div><dt>Problem</dt><dd>Move hardware products from evolving requirements through production and launch.</dd></div>
+              <div><dt>Role</dt><dd>Coordinated industrial design, engineering, manufacturing, and launch stakeholders.</dd></div>
+              <div><dt>Approach</dt><dd>Managed schedules, cross-functional dependencies, technical risks, and product tradeoffs.</dd></div>
+              <div><dt>Outcome</dt><dd>Helped multiple products progress through the full development lifecycle with clearer decisions and alignment.</dd></div>
+            </dl>
+          </article>
+
+          <article class="case">
+            <span class="case-number">04</span>
+            <header>
+              <h3>Firmware &amp; Storage Systems</h3>
+              <span class="case-tag">Engineering foundation</span>
+            </header>
+            <dl class="case-flow">
+              <div><dt>Problem</dt><dd>Build and deliver reliable embedded software within complex storage hardware systems.</dd></div>
+              <div><dt>Role</dt><dd>Software and firmware engineer, later moving into technical program leadership.</dd></div>
+              <div><dt>Approach</dt><dd>Worked close to the system across real-time software, hardware constraints, and delivery coordination.</dd></div>
+              <div><dt>Outcome</dt><dd>Built the technical foundation for leading products and programs with engineering depth and systems awareness.</dd></div>
+            </dl>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about" aria-labelledby="about-title">
+      <div class="wrap">
+        <header class="section-head">
+          <span class="section-index">03 / About</span>
+          <div><h2 id="about-title">Technical depth. Product perspective.</h2></div>
+        </header>
+
+        <div class="about-grid">
+          <div class="about-copy">
+            <p>I’m Ben White, a technical product and program leader with 12+ years of experience delivering across cloud infrastructure, enterprise software, consumer electronics, storage systems, and customer-facing services.</p>
+            <p>I began as a software and firmware engineer. That foundation still shapes how I work: understand the system, make the tradeoffs visible, and connect customer needs with engineering reality and business objectives.</p>
+            <p>My current focus is building products directly and deepening my work in technical product management and new-product development.</p>
+          </div>
+          <div>
+            <p class="eyebrow">Working strengths</p>
+            <ul class="capabilities">
+              <li>Product and workflow definition</li>
+              <li>Technical program leadership</li>
+              <li>Customer-to-engineering translation</li>
+              <li>Cross-functional execution</li>
+              <li>Architecture and systems thinking</li>
+              <li>Risk, dependency, and tradeoff management</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="experience" aria-labelledby="experience-title">
+      <div class="wrap">
+        <header class="section-head">
+          <span class="section-index">04 / Experience snapshot</span>
+          <div>
+            <h2 id="experience-title">A path from engineering to product leadership.</h2>
+            <p class="section-intro">Experience spanning the technology stack and the product lifecycle.</p>
+          </div>
+        </header>
+
+        <div class="timeline">
+          <article class="timeline-item">
+            <h3>Von Neumann Systems LLC<br><span class="case-tag">The Award Vault</span></h3>
+            <p>Founder and product builder — defining the product, designing the service, and taking it through implementation and iteration.</p>
+          </article>
+          <article class="timeline-item">
+            <h3>Platform9</h3>
+            <p>Cloud infrastructure and customer-facing technical leadership across complex products and delivery environments.</p>
+          </article>
+          <article class="timeline-item">
+            <h3>Equinix</h3>
+            <p>Infrastructure services and cross-functional program delivery connecting technical execution with customer needs.</p>
+          </article>
+          <article class="timeline-item">
+            <h3>PCH International</h3>
+            <p>Consumer electronics product development across design, engineering, manufacturing, and launch.</p>
+          </article>
+          <article class="timeline-item">
+            <h3>Western Digital</h3>
+            <p>Firmware engineering and technical program management across embedded software and storage systems.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section contact" id="contact" aria-labelledby="contact-title">
+      <div class="wrap contact-grid">
+        <div>
+          <p class="eyebrow">Contact &amp; links</p>
+          <h2 id="contact-title">Interested in the work or where it could lead?</h2>
+          <p class="contact-copy">I’m focused on technical product management, new-product development, and the practical work of bringing ambitious ideas into the world.</p>
+        </div>
+        <ul class="contact-links" aria-label="External links">
+          <li><a href="https://theawardvault.com/" target="_blank" rel="noopener noreferrer">The Award Vault</a></li>
+          <li><a href="https://github.com/Techtopoly" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/bentopia/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+          <li><a href="mailto:wbenjad@gmail.com">Email</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <span>© 2026 Von Neumann Systems LLC</span>
+      <span>Independent product studio · Ben White</span>
     </div>
+  </footer>
 </body>
 </html>
